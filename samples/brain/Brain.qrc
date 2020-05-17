@@ -1,0 +1,5 @@
+<RCC>
+  <qresource>
+    <file>brain.qml</file>
+  </qresource>
+</RCC>
