@@ -61,6 +61,8 @@ the `start`, `stop` and `toggle` methods.
       array to the texture.
 */
 
+#define DRAUTO_PROFILING
+
 namespace drautomaton {
 
 class View : public QQuickItem

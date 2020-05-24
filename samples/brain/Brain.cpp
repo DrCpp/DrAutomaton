@@ -21,6 +21,7 @@
 #include <QGuiApplication>
 #include <QQuickView>
 
+#define DRAUTO_PROFILING
 #include <DrAutomaton/DrAutomaton.h>
 
 using namespace drautomaton;
@@ -89,6 +90,9 @@ int main(int argc, char** argv)
 
   // Run the app.
   view.show();
-  return app.exec();
+  app.exec();
+
+  // Print profiling results.
+  DRPROF_PRINT_ALL();
 }
 

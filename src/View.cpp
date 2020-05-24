@@ -185,6 +185,8 @@ View::onWindowChanged(QQuickWindow* window)
 void
 View::updatePixels()
 {
+  DRPROF_START("View::updatePixels");
+
   // If no model is available, ignore the call.
   if (!model_)
   {
@@ -198,6 +200,8 @@ View::updatePixels()
       pixels_.begin(),
       [&](int x) { return coloring_[x]; }
     );
+
+  DRPROF_STOP("View::updatePixels");
 
   // Load pixels.
   update();

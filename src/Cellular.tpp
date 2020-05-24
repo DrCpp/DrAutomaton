@@ -129,12 +129,12 @@ Cellular<Rule>::doUpdate()
   }
 
   futures[0].wait();
-  DRPROF_START("Cellular::wait");
+  DRPROF_START("Cellular::doUpdate::wait");
   for (const auto& f : futures)
   {
     f.wait();
   }
-  DRPROF_STOP("Cellular::wait");
+  DRPROF_STOP("Cellular::doUpdate::wait");
   futures.clear();
   DRPROF_STOP("Cellular::doUpdate::update");
 

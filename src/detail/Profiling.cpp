@@ -91,7 +91,7 @@ unsigned int getSlowestPass(const std::string& tag)
     }
   }
 
-  return t / 1000;
+  return t;
 }
 
 unsigned int getFastestPass(const std::string& tag)
@@ -108,7 +108,7 @@ unsigned int getFastestPass(const std::string& tag)
     }
   }
 
-  return t / 1000;
+  return t;
 }
 
 } // namespace drprof
