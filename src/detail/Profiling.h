@@ -21,54 +21,58 @@
 
 #include <chrono>
 #include <iostream>
-#include <tuple>
+#include <vector>
 #include <unordered_map>
 
 namespace drprof {
 
-extern std::unordered_map<
-    std::string,
-    std::tuple<
-        std::chrono::high_resolution_clock::time_point,
-        unsigned int,
-        unsigned int
-      >
-  > tags_;
+struct Time
+{
+  // Return duration in microseconds.
+  unsigned int getDuration() const
+  {
+    return std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+  }
 
-unsigned int getTime(const std::string&);
+  // Check if both time points have been set.
+  bool isComplete() const
+  {
+    // ...by checking that `stop` isn't equal to the clock's epoch.
+    return stop != std::chrono::high_resolution_clock::time_point{};
+  }
+
+  // Note: Default value is the clock's epoch.
+  std::chrono::high_resolution_clock::time_point start{};
+  std::chrono::high_resolution_clock::time_point stop{};
+};
+
+extern std::unordered_map<std::string, std::vector<Time>> data_;
+
+void start(const std::string&);
+void stop(const std::string&);
+unsigned int getTime(const std::string&);  // In milliseconds.
 unsigned int getPasses(const std::string&);
+unsigned int getSlowestPass(const std::string&);
+unsigned int getFastestPass(const std::string&);
 
 } // namespace drprof
 
 #ifdef DRAUTO_PROFILING
 
-#define DRPROF_START(tag) \
-do { \
-  auto it = drprof::tags_.insert(std::make_pair(tag, std::make_tuple(std::chrono::high_resolution_clock::time_point{}, 0, 0))).first; \
-  std::get<0>(std::get<1>(*it)) = std::chrono::high_resolution_clock::now(); \
-} while(0)
+#define DRPROF_START(tag) drprof::start(tag)
 
-#define DRPROF_STOP(tag) \
-do { \
-  auto it = drprof::tags_.find(tag); \
-  assert(it != drprof::tags_.end() && "No such tag: " # tag); \
-  auto t1 = std::chrono::high_resolution_clock::now(); \
-  std::get<1>(std::get<1>(*it)) += std::chrono::duration_cast<std::chrono::microseconds>( \
-      t1 - std::get<0>(std::get<1>(*it)) \
-    ).count(); \
-  std::get<2>(std::get<1>(*it)) += 1; \
-} while(0)
+#define DRPROF_STOP(tag) drprof::stop(tag)
 
 #define DRPROF_PRINT(tag) \
 do { \
-  auto it = drprof::tags_.find(tag); \
-  assert(it != drprof::tags_.end() && "No such tag: " # tag); \
-  std::cout << "DrProf: " << tag << ": " << std::get<1>(std::get<1>(*it)) / 1000 << "ms" << "; " << std::get<2>(std::get<1>(*it)) << " passes" << std::endl; \
+  auto it = drprof::data_.find(tag); \
+  assert(it != drprof::data_.end() && "No such tag: " # tag); \
+  std::cout << "DrProf: " << tag << ": " << drprof::getTime(tag) << "ms" << "; " << drprof::getPasses(tag) << " passes" << std::endl; \
 } while(0)
 
 #define DRPROF_PRINT_ALL() \
 do { \
-  for (const auto& tag : drprof::tags_) \
+  for (const auto& tag : drprof::data_) \
   { \
     DRPROF_PRINT(std::get<0>(tag)); \
   } \

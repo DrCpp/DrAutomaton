@@ -22,29 +22,93 @@
 
 namespace drprof {
 
-std::unordered_map<
-    std::string,
-    std::tuple<
-        std::chrono::high_resolution_clock::time_point,
-        unsigned int,
-        unsigned int
-      >
-  > tags_{};
+std::unordered_map<std::string, std::vector<Time>> data_{};
+
+void start(const std::string& tag)
+{
+  // Push a new time stamp. (Default construct vector on first call)
+  auto& x = data_[tag];
+  x.push_back(Time{});
+  x.back().start = std::chrono::high_resolution_clock::now();  // Note: Take time _last_.
+}
+
+void stop(const std::string& tag)
+{
+  // Take time _first_.
+  auto t = std::chrono::high_resolution_clock::now();
+
+  auto it = data_.find(tag);
+  assert( it != data_.end() && "No such tag");
+  it->second.back().stop = t;
+}
 
 unsigned int
 getTime(const std::string& tag)
 {
-  auto it = drprof::tags_.find(tag);
-  assert(it != drprof::tags_.end() && "No such tag");
-  return std::get<1>(std::get<1>(*it)) / 1000;
+  auto it = drprof::data_.find(tag);
+  assert(it != drprof::data_.end() && "No such tag");
+
+  // Add up all complete time stamps.
+  unsigned int t = 0;
+  for (const auto& time : it->second)
+  {
+    if (time.isComplete())
+    {
+      t += time.getDuration();
+    }
+  }
+  return t / 1000;
 }
 
 unsigned int
 getPasses(const std::string& tag)
 {
-  auto it = drprof::tags_.find(tag);
-  assert(it != drprof::tags_.end() && "No such tag");
-  return std::get<2>(std::get<1>(*it));
+  auto it = drprof::data_.find(tag);
+  assert(it != drprof::data_.end() && "No such tag");
+
+  // Check if the last pass is complete.
+  if (it->second.back().isComplete())
+  {
+    return it->second.size();
+  }
+  else
+  {
+    return it->second.size() - 1;
+  }
+}
+
+unsigned int getSlowestPass(const std::string& tag)
+{
+  auto it = drprof::data_.find(tag);
+  assert(it != drprof::data_.end() && "No such tag");
+
+  unsigned int t = it->second.front().getDuration();
+  for (const auto& time : it->second)
+  {
+    if (time.isComplete())
+    {
+      t = std::max(t, time.getDuration());
+    }
+  }
+
+  return t / 1000;
+}
+
+unsigned int getFastestPass(const std::string& tag)
+{
+  auto it = drprof::data_.find(tag);
+  assert(it != drprof::data_.end() && "No such tag");
+
+  unsigned int t = it->second.front().getDuration();
+  for (const auto& time : it->second)
+  {
+    if (time.isComplete())
+    {
+      t = std::min(t, time.getDuration());
+    }
+  }
+
+  return t / 1000;
 }
 
 } // namespace drprof

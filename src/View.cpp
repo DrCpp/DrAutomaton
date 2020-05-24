@@ -23,6 +23,7 @@
 #include <QOpenGLFunctions>
 #include <QSGSimpleTextureNode>
 
+#include "detail/Profiling.h"
 #include "Model.h"
 
 namespace drautomaton {
