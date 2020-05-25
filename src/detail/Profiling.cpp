@@ -38,15 +38,15 @@ void stop(const std::string& tag)
   auto t = std::chrono::high_resolution_clock::now();
 
   auto it = data_.find(tag);
-  assert( it != data_.end() && "No such tag");
+  assert(it != data_.end() && "No such tag");
   it->second.back().stop = t;
 }
 
 unsigned int
 getTime(const std::string& tag)
 {
-  auto it = drprof::data_.find(tag);
-  assert(it != drprof::data_.end() && "No such tag");
+  auto it = data_.find(tag);
+  assert(it != data_.end() && "No such tag");
 
   // Add up all complete time stamps.
   unsigned int t = 0;
@@ -63,51 +63,76 @@ getTime(const std::string& tag)
 unsigned int
 getPasses(const std::string& tag)
 {
-  auto it = drprof::data_.find(tag);
-  assert(it != drprof::data_.end() && "No such tag");
+  auto it = data_.find(tag);
+  assert(it != data_.end() && "No such tag");
 
-  // Check if the last pass is complete.
-  if (it->second.back().isComplete())
-  {
-    return it->second.size();
-  }
-  else
-  {
-    return it->second.size() - 1;
-  }
+  return std::count_if(
+      it->second.begin(), it->second.end(),
+      [&](const auto& time)
+      {
+        return time.isComplete();
+      }
+    );
 }
 
-unsigned int getSlowestPass(const std::string& tag)
+unsigned int
+getIncompletePasses(const std::string& tag)
 {
-  auto it = drprof::data_.find(tag);
-  assert(it != drprof::data_.end() && "No such tag");
+  auto it = data_.find(tag);
+  assert(it != data_.end() && "No such tag");
 
-  unsigned int t = it->second.front().getDuration();
-  for (const auto& time : it->second)
-  {
-    if (time.isComplete())
-    {
-      t = std::max(t, time.getDuration());
-    }
-  }
+  return std::count_if(
+      it->second.begin(), it->second.end(),
+      [&](const auto& time)
+      {
+        return (not time.isComplete());
+      }
+    );
+}
 
+unsigned int
+getSlowestPass(const std::string& tag)
+{
+  auto it = data_.find(tag);
+  assert(it != data_.end() && "No such tag");
+
+  unsigned int t = 0;
+  std::for_each(
+      it->second.begin(), it->second.end(),
+      [&](const auto& time)
+      {
+        if (time.isComplete())
+        {
+          t = std::max(t, time.getDuration());
+        }
+      }
+    );
   return t;
 }
 
 unsigned int getFastestPass(const std::string& tag)
 {
-  auto it = drprof::data_.find(tag);
-  assert(it != drprof::data_.end() && "No such tag");
+  auto it = data_.find(tag);
+  assert(it != data_.end() && "No such tag");
 
-  unsigned int t = it->second.front().getDuration();
-  for (const auto& time : it->second)
-  {
-    if (time.isComplete())
-    {
-      t = std::min(t, time.getDuration());
-    }
-  }
-
+  unsigned int t = 0;
+  bool initialized = false;
+  std::for_each(
+      it->second.begin(), it->second.end(),
+      [&](const auto& time)
+      {
+        if (time.isComplete())
+        {
+          if (not initialized)
+          {
+            t = time.getDuration();
+            initialized = true;
+            return;
+          }
+          t = std::min(t, time.getDuration());
+        }
+      }
+    );
   return t;
 }
 

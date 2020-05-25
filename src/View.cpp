@@ -52,6 +52,7 @@ View::View()
 QSGNode*
 View::updatePaintNode(QSGNode* old, UpdatePaintNodeData*)
 {
+  DRPROF_START("View::rendering");
   DRPROF_START("View::updatePaintNode");
   assert(model_);
 
@@ -95,8 +96,8 @@ View::updatePaintNode(QSGNode* old, UpdatePaintNodeData*)
     );  // Note: We're using TexSubImage2D instead of TexImage2D, as the
         // former updates the texture while the latter recreates it.
   node->markDirty(QSGNode::DirtyGeometry);
-
   DRPROF_STOP("View::updatePaintNode");
+
   return node;
 }
 
@@ -190,6 +191,7 @@ View::updatePixels()
   // If no model is available, ignore the call.
   if (!model_)
   {
+    DRPROF_STOP("View::updatePixels");
     return;
   }
 

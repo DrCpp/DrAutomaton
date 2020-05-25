@@ -54,6 +54,7 @@ unsigned int getTime(const std::string&);  // In milliseconds.
 unsigned int getPasses(const std::string&);
 unsigned int getSlowestPass(const std::string&);  // In microseconds.
 unsigned int getFastestPass(const std::string&);
+unsigned int getIncompletePasses(const std::string& tag);
 
 } // namespace drprof
 
@@ -67,7 +68,7 @@ unsigned int getFastestPass(const std::string&);
 do { \
   auto it = drprof::data_.find(tag); \
   assert(it != drprof::data_.end() && "No such tag: " # tag); \
-  std::cout << "DrProf: " << tag << ": " << drprof::getTime(tag) << "ms" << "; " << drprof::getPasses(tag) << " passes" << "; " << "slowest: " << drprof::getSlowestPass(tag) << "us" << "; " << "fastest: " << drprof::getFastestPass(tag) << "us" << std::endl; \
+  std::cout << "DrProf: " << tag << ": " << drprof::getTime(tag) << "ms" << "; " << drprof::getPasses(tag) << " passes" << "; " << "slowest: " << drprof::getSlowestPass(tag) << "us" << "; " << "fastest: " << drprof::getFastestPass(tag) << "us" << "; " << "incomplete passes: " << drprof::getIncompletePasses(tag) << std::endl; \
 } while(0)
 
 #define DRPROF_PRINT_ALL() \

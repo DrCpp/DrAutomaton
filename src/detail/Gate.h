@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+#define DRAUTO_PROFILING
+
 namespace drautomaton {
 
 /* Gate

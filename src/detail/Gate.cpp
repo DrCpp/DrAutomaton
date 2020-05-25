@@ -18,6 +18,8 @@
 
 #include "Gate.h"
 
+#include "../detail/Profiling.h"
+
 namespace drautomaton {
 
 void
@@ -30,6 +32,7 @@ Gate::lhs()
 void
 Gate::rhs()
 {
+  DRPROF_STOP("View::rendering");
   rhs_ = true;
   emitIfReady();
 }
