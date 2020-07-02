@@ -19,7 +19,7 @@
 #include <QGuiApplication>
 #include <QQuickView>
 
-#include "ModelMock.h"
+#include "mock/ModelMock.h"
 #include "View.h"
 
 using namespace drautomaton;
@@ -33,8 +33,56 @@ int main(int argc, char** argv)
    * Create mock model
    * ********************************** */
 
-  // Create mock object.
-  auto model = std::make_shared<drautomaton::mock::ModelMock>();
+  // Create and configure mock object.
+  int width = 16;
+  int height = 12;
+  std::vector<int> frame1 = {
+      1, 1, 1, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
+      1, 1, 1, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
+      1, 1, 1, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
+      1, 1, 1, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
+
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
+
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  3, 3, 3, 3,
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  3, 3, 3, 3,
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  3, 3, 3, 3,
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  3, 3, 3, 3,
+    };
+  std::vector<int> frame2 = {
+      1, 1, 1, 1,  0, 0, 0, 0,  0, 0, 0, 0,  2, 2, 2, 2,
+      1, 1, 1, 1,  0, 0, 0, 0,  0, 0, 0, 0,  2, 2, 2, 2,
+      1, 1, 1, 1,  0, 0, 0, 0,  0, 0, 0, 0,  2, 2, 2, 2,
+      1, 1, 1, 1,  0, 0, 0, 0,  0, 0, 0, 0,  2, 2, 2, 2,
+
+      0, 0, 0, 0,  2, 2, 2, 2,  0, 0, 0, 0,  0, 0, 0, 0,
+      0, 0, 0, 0,  2, 2, 2, 2,  0, 0, 0, 0,  0, 0, 0, 0,
+      0, 0, 0, 0,  2, 2, 2, 2,  0, 0, 0, 0,  0, 0, 0, 0,
+      0, 0, 0, 0,  2, 2, 2, 2,  0, 0, 0, 0,  0, 0, 0, 0,
+
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  3, 3, 3, 3,
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  3, 3, 3, 3,
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  3, 3, 3, 3,
+      0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  3, 3, 3, 3,
+    };
+  assert(frame1.size() == width * height);
+  assert(frame2.size() == width * height);
+  auto model = std::make_shared<drautomaton::ModelMock>();
+  model->mock.width().state().returns("*", 16);
+  model->mock.height().state().returns("*", 12);
+  model->mock.vertices().state().returns("", std::move(frame1))
+                                .returns("state1", std::move(frame2));
+  model->mock.doUpdate().state().emits("*", &IModel::updated);
+  model->mock.doUpdate().state().transition("", "state1")
+                                .transition("state1", "");
+
+  // auto x = model->vertices()[32];
+  // assert(x == 0);
+  // model->doUpdate();
+  // assert(model->vertices()[32] == 1);
 
   /* **********************************
    * Configure view
@@ -46,17 +94,19 @@ int main(int argc, char** argv)
 
   View* automaton = static_cast<View*>(view.rootObject());
   assert(automaton);
-  automaton->setModel(model);
   automaton->setColor(0,   0,   0,   0);
   automaton->setColor(1, 255,   0,   0);
   automaton->setColor(2,   0, 255,   0);
   automaton->setColor(3,   0,   0, 255);
+  automaton->setModel(model);
+  // automaton->setFramerate(3);
   automaton->start();
+  QMetaObject::invokeMethod(model.get(), "updated", Qt::DirectConnection);
+
   view.show();
 
   // Run app for five seconds.
   QTimer::singleShot(1000 * 5, &app, &QCoreApplication::quit);
   auto r = app.exec();
-
   return r;
 }

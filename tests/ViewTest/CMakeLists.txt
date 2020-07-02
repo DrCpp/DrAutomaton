@@ -1,5 +1,4 @@
 add_executable(ViewTest
-  ModelMock.cpp
   ViewTest.cpp
   ViewTest.qrc
 )
