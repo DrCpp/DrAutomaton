@@ -24,7 +24,7 @@ cellular automata.
 
 
 <p align = "center">
-  <img src="docs/images/srloop.png" width="400" height="400"> &emsp; &emsp; &emsp; <img src="docs/images/cyclic.png" width="400" height="400">
+  <img src="docs/images/srloop.png" width="300" height="300"> &emsp; &emsp; &emsp; <img src="docs/images/cyclic.png" width="300" height="300">
 </p>
 
 
@@ -63,7 +63,7 @@ The basic requirements for building and using **DrAutomaton** are:
 
 _Optional_ requirement (required to execute all tests):
 
-* [DrMock](https://github.com/DrCpp/DrMock) (`>= 0.2.0`), our testing/mocking framework
+* [DrMock](https://github.com/DrCpp/DrMock) (`>= 0.3.0`), our testing/mocking framework
 
 Note that this dependency cannot be satisfied on Windows,
 as DrMock is currently not supported there.
