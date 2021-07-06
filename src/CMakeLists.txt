@@ -58,6 +58,8 @@ if (${DrMock_FOUND})
       ICellular.h
     LIBS
       DrAutomaton
+    OPTIONS
+      -fPIC
   )
   target_compile_options(${PROJECT_NAME}Mock PRIVATE ${compileOptions})
 endif()
