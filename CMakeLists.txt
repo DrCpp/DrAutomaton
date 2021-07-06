@@ -61,12 +61,6 @@ set(CMAKE_INSTALL_LIBDIR "lib")
 set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 install(
-  DIRECTORY pkgconfig/
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-  FILES_MATCHING
-    PATTERN "*.pc"
-)
-install(
   TARGETS ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}Targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -86,15 +80,6 @@ install(
   FILES_MATCHING
     PATTERN "*.h"
     PATTERN "*.tpp"
-)
-
-#######################################
-# pkgconfig
-#######################################
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/pkgconfig/${PROJECT_NAME}.pc.in
-  ${CMAKE_SOURCE_DIR}/pkgconfig/${PROJECT_NAME}.pc
 )
 
 #######################################
