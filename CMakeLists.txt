@@ -35,7 +35,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Import DrMock if installed.
 find_package(DrMock COMPONENTS Core)
 if (${DrMock_FOUND})
-  DrMockEnableQt()
+  drmock_enable_qt()
 else()
   set(CMAKE_AUTOMOC ON)
 endif()
