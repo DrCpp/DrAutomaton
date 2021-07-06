@@ -32,7 +32,7 @@ Build requirements and supported platforms are found in the [README.md](../READM
 Set the environment variable `$DRAUTO_QT_PATH` to the location of the Qt library.
 For example:
 ```
-export DRMOCK_QT_PATH="$HOME/Qt/5.14.2/clang_64
+export DRAUTO_QT_PATH="$HOME/Qt/5.14.2/clang_64
 ```
 Next, do `make`, then `make install` in the source directory.
 This will install the **DrAutomaton** cmake package in `{SOURCE_DIR}/prefix`.
