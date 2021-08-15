@@ -63,7 +63,7 @@ The basic requirements for building and using **DrAutomaton** are:
 
 _Optional_ requirement (required to execute all tests):
 
-* [DrMock](https://github.com/DrCpp/DrMock) (`>= 0.3.0`), our testing/mocking framework
+* [DrMock](https://github.com/DrCpp/DrMock) (`>= 0.6.0`), our testing/mocking framework
 
 Note that this dependency cannot be satisfied on Windows,
 as DrMock is currently not supported there.
