@@ -68,7 +68,7 @@ DRTEST_TEST(onClicked)
 
   // Run the test.
   cell_view.onClicked(x, y);
-  DRTEST_VERIFY_MOCK(model->mock.increment());
+  DRTEST_VERIFY_MOCK(model->mock);
 }
 
 DRTEST_DATA(onClickedFailure)
@@ -76,10 +76,10 @@ DRTEST_DATA(onClickedFailure)
   drtest::addColumn<qreal>("x");  // Click position.
   drtest::addColumn<qreal>("y");
 
-  drtest::addRow("x out of bounds",  6.12,  1.23);
-  drtest::addRow("x out of bounds", -5.67,  1.23);
-  drtest::addRow("y out of bounds",  1.23,  8.00);
-  drtest::addRow("y out of bounds",  1.23, -0.12);
+  drtest::addRow("x out of bounds pos",  6.12,  1.23);
+  drtest::addRow("x out of bounds neg", -5.67,  1.23);
+  drtest::addRow("y out of bounds pos",  1.23,  8.00);
+  drtest::addRow("y out of bounds neg",  1.23, -0.12);
 }
 
 DRTEST_TEST(onClickedFailure)
@@ -108,5 +108,5 @@ DRTEST_TEST(onClickedFailure)
 
   // Run the test.
   cell_view.onClicked(x, y);
-  DRTEST_VERIFY_MOCK(model->mock.increment());
+  DRTEST_VERIFY_MOCK(model->mock);
 }

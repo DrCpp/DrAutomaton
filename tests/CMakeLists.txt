@@ -20,7 +20,7 @@ cmake_minimum_required(VERSION 3.7)
 include_directories(../src)
 
 if (${DrMock_FOUND})
-  DrMockTest(
+  drmock_test(
     LIBS DrAutomatonMock Qt5::Test  # Qt5::Test required for QSignalSpy.
     TESTS
       Space.cpp

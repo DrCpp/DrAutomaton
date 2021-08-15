@@ -124,7 +124,7 @@ DRTEST_TEST(doUpdate)
   // Create SUT and run the test.
   auto model = std::make_shared<Model<Test>>(cellular);
   model->doUpdate();
-  DRTEST_VERIFY_MOCK(cellular->mock.doUpdate());
+  DRTEST_VERIFY_MOCK(cellular->mock);
 }
 
 DRTEST_TEST(increment)
@@ -150,5 +150,5 @@ DRTEST_TEST(increment)
 
   // Run test.
   model->increment(1, 2);
-  DRTEST_VERIFY_MOCK(cellular->mock.increment());
+  DRTEST_VERIFY_MOCK(cellular->mock);
 }

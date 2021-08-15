@@ -48,7 +48,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE ${compileOptions})
 
 # If DrMock is installed, create the mock module.
 if (${DrMock_FOUND})
-  DrMockModule(
+  drmock_library(
     TARGET ${PROJECT_NAME}Mock
     QTMODULES
       Qt5::Core
